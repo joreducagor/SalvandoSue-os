@@ -9,11 +9,11 @@ class DetailUserSerializer(ModelSerializer):
 
 class UserSerializer(ModelSerializer):
   detailuser = DetailUserSerializer()
-  
+
   class Meta:
   	model = User
   	fields = ('id', 'username', 'first_name', 'last_name', 'email', 'detailuser')
-  
+
   def create(self, validated_data):
     detailuser = validated_data.pop('detailuser')
     user = User.objects.create(**validated_data)

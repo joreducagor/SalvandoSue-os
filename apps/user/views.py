@@ -1,26 +1,24 @@
 from django.shortcuts import render
 from django.http import Http404
 from django.contrib.auth.models import User
-
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from apps.user.serializers import UserSerializer, DetailUserSerializer
 import json
 
 class APIUserList(APIView):
 	
-	def get(self, request, format=None):
+	def get(self, request, format = None):
 		users = User.objects.all()
-		users_json = UserSerializer(users, many=True)
+		users_json = UserSerializer(users, many = True)
 		return Response({'users': users_json.data})
 
 	def post(self, request):
-		user_json = UserSerializer(data=request.data)
+		user_json = UserSerializer(data = request.data)
 		if user_json.is_valid():
 			user_json.save()
-			return Response(user_json.data, status=201)
-		return Response(user_json.errors, status=400)
+			return Response(user_json.data, status = 201)
+		return Response(user_json.errors, status = 400)
 
 class APIUserDetail(APIView):
 
@@ -37,8 +35,8 @@ class APIUserDetail(APIView):
 
 	def put(self, request, pk):
 		user = self.set_object(pk)
-		user_json = UserSerializer(user, data=request.data)
+		user_json = UserSerializer(user, data = request.data)
 		if user_json.is_valid():
 			user_json.save()
 			return Response(user_json.data)
-		return Response(user_json.data, status=400)
+		return Response(user_json.data, status = 400)

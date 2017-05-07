@@ -17,19 +17,18 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name='DetailUser',
+            name='Device',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('twitter_token', models.CharField(max_length=50)),
-                ('dob', models.DateField()),
-                ('phone', models.CharField(max_length=9)),
-                ('enabled', models.BooleanField(default=True)),
+                ('device_type', models.CharField(choices=[('0', 'android'), ('1', 'ios')], max_length=1)),
+                ('uuid', models.CharField(max_length=50)),
+                ('key', models.CharField(max_length=50)),
                 ('created_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
+                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
             options={
-                'verbose_name': 'DetailUser',
-                'verbose_name_plural': 'DetailUsers',
+                'verbose_name': 'Device',
+                'verbose_name_plural': 'Devices',
             },
         ),
     ]

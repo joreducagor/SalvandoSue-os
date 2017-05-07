@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from apps.user.serializers import UserSerializer, DetailUserSerializer
+from apps.account.serializers import LinkedAccountSerializer
 import json
 
 class APIUserList(APIView):
@@ -40,3 +41,17 @@ class APIUserDetail(APIView):
 			user_json.save()
 			return Response(user_json.data)
 		return Response(user_json.data, status = 400)
+
+class APIUserLinkedAccounts(APIView):
+
+	def set_object(self, pk):
+		try:
+			return User.objects.get(pk=pk)
+		except User.DoesNotExist:
+			raise Http404
+
+	def get(self, request, pk):
+		user = self.set_object(pk)
+		linked_accounts = user.linkedaccount_set.all()
+		linked_accounts_json = LinkedAccountSerializer(linked_accounts, many = True)
+		return Response({"linked_accounts": linked_accounts_json.data})

@@ -82,7 +82,9 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': 'salvando_sueños',
         'USER': 'postgres',
-        'PASSWORD': 'nuttertools',
+        'PASSWORD': 'rbpassword',
+        'HOST': 'localhost',
+        'PORT': '',
     }
 }
 

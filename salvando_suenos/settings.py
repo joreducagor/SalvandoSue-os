@@ -22,10 +22,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY='uf$hmc)97az@6tpi3s!n!j7@)&mt-9od%_c4*3pd5e^ax1^1u1'
 DEBUG=True
 
-import dj_database_url
-db_from_env = dj_database_url.config()
-DATABASES['default'].update(db_from_env)
-
 # ALLOWED_HOSTS = []
 ALLOWED_HOSTS = ['salvandosuenos-app.herokuapp.com']
 
@@ -123,6 +119,9 @@ USE_L10N = True
 
 USE_TZ = True
 
+import dj_database_url
+db_from_env = dj_database_url.config()
+DATABASES['default'].update(db_from_env)
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

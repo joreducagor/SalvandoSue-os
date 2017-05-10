@@ -19,8 +19,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
-SECRET_KEY = config('SECRET_KEY')
-DEBUG = config('DEBUG', default=False, cast=bool)
+SECRET_KEY='uf$hmc)97az@6tpi3s!n!j7@)&mt-9od%_c4*3pd5e^ax1^1u1'
+DEBUG=True
 
 ALLOWED_HOSTS = ['salvandosuenos-app.herokuapp.com']
 

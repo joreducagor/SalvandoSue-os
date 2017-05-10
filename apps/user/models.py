@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 class DetailUser(models.Model):
 	twitter_token = models.CharField(max_length = 50)
-	dob = models.DateField()
-	phone = models.CharField(max_length = 9)
+	location = models.CharField(max_length = 100)
+	description = models.TextField(default = '')
 	enabled = models.BooleanField(default = True)
 	created_at = models.DateTimeField(auto_now = True)
 	user = models.OneToOneField(User, null = False, blank = False, on_delete = models.CASCADE)

@@ -5,7 +5,7 @@ from apps.user.models import DetailUser
 class DetailUserSerializer(ModelSerializer):
 	class Meta:
 		model = DetailUser
-		fields = ('twitter_token', 'dob', 'phone', 'enabled', 'created_at')
+		fields = ('twitter_token', 'location', 'description', 'enabled', 'created_at')
 
 class UserSerializer(ModelSerializer):
   detailuser = DetailUserSerializer()

@@ -36,3 +36,43 @@ class APILinkedAccountList(APIView):
 				return Response(linked_account_json.errors, status = 400)
 		else:
 			return Response({"user": "invalid username"})
+
+	def delete(self, request):
+		try:
+			user = User.objects.get(username = request.data['username'])
+		except User.DoesNotExist:
+			user = None
+		if user is not None:
+			try:
+				linked_account = LinkedAccount.objects.get(twitter_user_id = request.data['twitter_user_id'])
+			except LinkedAccount.DoesNotExist:
+				linked_account = None
+			if linked_account is not None:
+				linked_account.users.remove(user)
+				return Response({"success": True}, status = 200)
+			else:
+				return Response({"success": False}, status = 200)
+		else:
+			return Response({"user": "invalid username"})
+
+
+
+class APIVerifyLinkedAccount(APIView):
+
+	def post(self, request):
+		try:
+			user = User.objects.get(username = request.data['username'])
+		except User.DoesNotExist:
+			user = None
+		if user is not None:
+			linked_accounts = user.linkedaccount_set.all()
+			try:
+				linked_account = linked_accounts.get(twitter_user_id = request.data['twitter_user_id'])
+			except LinkedAccount.DoesNotExist:
+				linked_account = None
+			if linked_account is not None:
+				return Response({"linked_account": True})
+			else:
+				return Response({"linked_account": False})
+		else:
+			return Response({"user": "invalid username"})

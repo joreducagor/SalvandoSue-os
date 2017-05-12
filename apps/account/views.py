@@ -20,7 +20,7 @@ class APILinkedAccountList(APIView):
 		except User.DoesNotExist:
 			user = None
 		try:
-			linked_account = LinkedAccount.objects.filter(twitter_user_id = request.data['linked_account_params']['twitter_user_id'], twitter_token = request.data['linked_account_params']['twitter_token']).first()
+			linked_account = LinkedAccount.objects.filter(twitter_user_id = request.data['linked_account_params']['twitter_user_id']).first()
 		except LinkedAccount.DoesNotExist:
 			linked_account = None
 		if user is not None:

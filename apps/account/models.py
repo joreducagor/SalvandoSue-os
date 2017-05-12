@@ -3,7 +3,7 @@ from apps.user.models import User
 
 class LinkedAccount(models.Model):
 	twitter_user_id = models.CharField(max_length = 50)
-	twitter_token = models.CharField(max_length = 50)
+	twitter_token = models.CharField(max_length = 50, null = True, blank = True)
 	created_at = models.DateTimeField(auto_now = True)
 	users = models.ManyToManyField(User)
 

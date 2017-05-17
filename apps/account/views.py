@@ -6,6 +6,7 @@ from apps.account.serializers import LinkedAccountSerializer
 from apps.account.models import LinkedAccount
 from apps.user.models import User
 import json
+import tweepy
 
 class APILinkedAccountList(APIView):
 
@@ -56,7 +57,6 @@ class APILinkedAccountList(APIView):
 			return Response({"user": "invalid username"})
 
 
-
 class APIVerifyLinkedAccount(APIView):
 
 	def post(self, request):
@@ -76,3 +76,43 @@ class APIVerifyLinkedAccount(APIView):
 				return Response({"linked_account": False})
 		else:
 			return Response({"user": "invalid username"})
+
+
+class APILinkedAccountTweets(APIView):
+
+	def set_object(self, pk):
+		try:
+			return LinkedAccount.objects.get(pk=pk)
+		except LinkedAccount.DoesNotExist:
+			raise Http404
+
+	def get(self, request, pk):
+
+		try:
+			consumer_key = 'oXEsPKoCY80yfEgMqNkgbrWOh'
+			consumer_secret = 'qLjVnNexnKZ6ISSwUVzd9nP0l8u30EUNwi11CwWhESlBKictCf'
+			access_token = '850161275539771392-kfUjQUdg6TFxAUncaLeKmKwrw4gdwAL'
+			access_token_secret = '5OA3Dcafb5DPPpBJmHDLtN65COpUnNuAzdN92s6CpPKHQ'
+
+			linked_account = self.set_object(pk)
+			auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
+			auth.set_access_token(access_token, access_token_secret)
+			api = tweepy.API(auth)
+			user = api.get_user(linked_account.twitter_screen_name)
+			tweets = api.user_timeline(screen_name = linked_account.twitter_screen_name, count = 50)
+			results = []
+			for tweet in tweets:
+				results.append({"tweet": tweet.text})
+
+			return Response(
+				{
+					"Getting statistics for: ": str(linked_account.twitter_screen_name),
+					"Followers: ": user.followers_count,
+					"Tweets: ": user.statuses_count,
+					"Favorites: ": user.favourites_count,
+					"Friends: ": user.friends_count,
+					"tweets": results
+				}
+			)
+		except tweepy.TweepError as e:
+			return Response({"Tweepy": "User not found"})

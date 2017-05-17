@@ -19,6 +19,14 @@ class APIUserList(APIView):
 		if user_json.is_valid():
 			user_json.save()
 			return Response(user_json.data, status = 201)
+		else:
+			try:
+				found_user = User.objects.get(username = request.data["username"])
+			except User.DoesNotExist:
+				found_user = None
+			if found_user is not None:
+				found_user_json = UserSerializer(found_user)
+				return Response(found_user_json.data, status = 200)
 		return Response(user_json.errors, status = 400)
 
 class APIUserDetail(APIView):

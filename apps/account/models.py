@@ -6,6 +6,7 @@ class LinkedAccount(models.Model):
   twitter_user_name = models.CharField(max_length = 50, null = True, blank = True)
   twitter_screen_name = models.CharField(max_length = 50, null = True, blank = True)
   twitter_image_url = models.CharField(max_length = 200, null = True, blank = True)
+  last_tweet = models.TextField(null = True, blank = True)
   created_at = models.DateTimeField(auto_now = True)
   users = models.ManyToManyField(User)
 

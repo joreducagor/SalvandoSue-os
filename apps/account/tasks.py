@@ -1,8 +1,9 @@
 from celery.task.schedules import crontab
 from celery.decorators import periodic_task
 from celery.utils.log import get_task_logger
-from datetime import datetime
 from apps.account.models import LinkedAccount
+from datetime import datetime
+from textblob import TextBlob
 import tweepy
  
 logger = get_task_logger(__name__)
@@ -15,42 +16,32 @@ access_token_secret = '5OA3Dcafb5DPPpBJmHDLtN65COpUnNuAzdN92s6CpPKHQ'
 auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
- 
-@periodic_task(run_every=(crontab(minute='*/1')), ignore_result=True)
+
+@periodic_task(run_every = (crontab(minute = '*/10')), ignore_result = True)
 def linked_accounts_analyzer():
-  for linked_account in LinkedAccount.objects.all():
-    try:
-      user = api.get_user(linked_account.twitter_screen_name)
-      tweets = api.user_timeline(screen_name = linked_account.twitter_screen_name, count = 50)
-      
-      
-      results = []
-      for tweet in tweets:
-        results.append({"tweet": tweet.text})
+	#for linked_account in LinkedAccount.objects.all():
+	linked_account = LinkedAccount.objects.first()
+	#try:
+	user = api.get_user(linked_account.twitter_screen_name)
+	tweets = api.user_timeline(screen_name = linked_account.twitter_screen_name, count = 20)
+	results = []
+	for tweet in tweets:
+		results.append(tweet.text)
+	if linked_account.last_tweet in results:
+		index = results.index(linked_account.last_tweet)
+		results = results[:index]
+	if results:
+		linked_account.last_tweet = results[0]
+		linked_account.save()
+		logger.info("Text considered dangerous")
+		logger.info("--------------------------------------")
+		for result in results:
+			analized_text = TextBlob(str(result)).translate(to = 'en')
+			if analized_text.sentiment.polarity < 0:
+				logger.info(result + " ---- polarity: " + str(analized_text.sentiment.polarity))
+		logger.info("--------------------------------------")
 
-      return Response(
-        {
-          "Getting statistics for: ": str(linked_account.twitter_screen_name),
-          "Followers: ": user.followers_count,
-          "Tweets: ": user.statuses_count,
-          "Favorites: ": user.favourites_count,
-          "Friends: ": user.friends_count,
-          "tweets": results
-        }
-      )
-    except tweepy.TweepError as e:
-      return Response({"Tweepy": "User not found"})
+	#except tweepy.TweepError as e:
+	#	logger.info("Internal problems with the linked accounts")
 
-
-
-  logger.info("Getting tweets")
-  now = datetime.now()
-  date_now = now.strftime("%d-%m-%Y %H:%M:%S")
-  # Perform all the operations you want here
-  result = 2+2
-  # The name of the Task, use to find the correct TaskHistory object
-  name = "linked_accounts_analyzer"
-  taskhistory = TaskHistory.objects.get_or_create(name=name)[0]
-  taskhistory.history.update({date_now: result})
-  taskhistory.save()
-  logger.info("Task finished: result = %i" % result)
+	name = "linked_accounts_analyzer"

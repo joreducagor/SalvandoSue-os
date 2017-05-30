@@ -21,10 +21,20 @@ class APIDeviceList(APIView):
 		except User.DoesNotExist:
 			user = None
 		if user is not None:
-			device_json = DeviceCreateSerializer(data = request.data['device_params'])
-			if device_json.is_valid():
-				device_json.save(user = user)
+			try:
+				device = Device.objects.get(uuid = request.data['device_params']['uuid'])
+			except Device.DoesNotExist:
+				device = None
+			if device is not None:
+				device.key = request.data['device_params']['key']
+				device.save()
+				device_json = DeviceSerializer(device)
 				return Response(device_json.data, status = 201)
-			return Response(device_json.errors, status = 400)
+			else:
+				device_json = DeviceCreateSerializer(data = request.data['device_params'])
+				if device_json.is_valid():
+					device_json.save(user = user)
+					return Response(device_json.data, status = 201)
+				return Response(device_json.errors, status = 400)
 		else:
 			return Response({"user": "invalid username"})

@@ -20,7 +20,7 @@ api = tweepy.API(auth)
 @periodic_task(run_every = (crontab(minute = '*/10')), ignore_result = True)
 def linked_accounts_analyzer():
 	#for linked_account in LinkedAccount.objects.all():
-	linked_account = LinkedAccount.objects.first()
+	linked_account = LinkedAccount.objects.last()
 	#try:
 	user = api.get_user(linked_account.twitter_screen_name)
 	tweets = api.user_timeline(screen_name = linked_account.twitter_screen_name, count = 20)

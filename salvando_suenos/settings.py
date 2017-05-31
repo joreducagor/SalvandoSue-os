@@ -116,6 +116,7 @@ DATABASES['default'].update(db_from_env)
 import djcelery
 djcelery.setup_loader()
 
+
 BROKER_URL = os.environ.get("REDISCLOUD_URL", "django://")
 BROKER_POOL_LIMIT = 1
 BROKER_CONNECTION_MAX_RETRIES = None
@@ -123,6 +124,10 @@ BROKER_CONNECTION_MAX_RETRIES = None
 CELERY_TASK_SERIALIZER = "json"
 CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+BROKER_TRANSPORT_OPTIONS = {
+    "max_connections": 2,
+}
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

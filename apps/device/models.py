@@ -7,8 +7,8 @@ class Device(models.Model):
     ('1', 'ios'),
 	)
 	device_type = models.CharField(max_length = 1, choices = DEVICES_TYPES)
-	uuid = models.CharField(max_length = 50)
-	key = models.CharField(max_length = 50)
+	uuid = models.TextField(blank=True, null=True)
+	key = models.TextField(blank=True, null=True)
 	user = models.ForeignKey(User, null = False, blank = False, on_delete = models.CASCADE)
 	created_at = models.DateTimeField(auto_now = True)
 

@@ -10,8 +10,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY='uf$hmc)97az@6tpi3s!n!j7@)&mt-9od%_c4*3pd5e^ax1^1u1'
 DEBUG=True
 
-ALLOWED_HOSTS = []
-# ALLOWED_HOSTS = ['salvandosuenos-app.herokuapp.com']
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['salvandosuenos-app.herokuapp.com']
 
 
 # Application definition
@@ -118,6 +118,22 @@ import dj_database_url
 db_from_env = dj_database_url.config()
 DATABASES['default'].update(db_from_env)
 
+import djcelery
+djcelery.setup_loader()
+
+
+BROKER_URL = os.environ.get("REDISCLOUD_URL", "django://")
+BROKER_POOL_LIMIT = 1
+BROKER_CONNECTION_MAX_RETRIES = None
+
+CELERY_TASK_SERIALIZER = "json"
+CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
+CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
+
+BROKER_TRANSPORT_OPTIONS = {
+    "max_connections": 2,
+}
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
@@ -128,14 +144,3 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT,'static/'),
 )
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
-
-import djcelery
-djcelery.setup_loader()
-
-BROKER_URL = os.environ.get("REDISCLOUD_URL", "django://")
-BROKER_POOL_LIMIT = 1
-BROKER_CONNECTION_MAX_RETRIES = None
-
-CELERY_TASK_SERIALIZER = "json"
-CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
-CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'

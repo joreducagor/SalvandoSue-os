@@ -26,10 +26,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'djcelery',
     'kombu.transport.django',
+    "fcm_django",
     'apps.user',
     'apps.device',
     'apps.account',
 ]
+
+FCM_DJANGO_SETTINGS = {
+    "FCM_SERVER_KEY": "AIzaSyD54IjFlxtX5Jd9-TW1t5iajBqH0RIn7R0"
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

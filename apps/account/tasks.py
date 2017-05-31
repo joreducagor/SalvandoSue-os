@@ -4,6 +4,7 @@ from celery.utils.log import get_task_logger
 from apps.account.models import LinkedAccount
 from datetime import datetime
 from textblob import TextBlob
+from fcm_django.models import FCMDevice
 import tweepy
  
 logger = get_task_logger(__name__)
@@ -39,6 +40,15 @@ def linked_accounts_analyzer():
 					for result in results:
 						analized_text = TextBlob(str(result)).translate(to = 'en')
 						if analized_text.sentiment.polarity < 0:
+							settings = {
+								"to" : "f-H2Q5CRgus:APA91bFJTCtanP5vFpldNyrY5fXmcjLOuXUhjEGfw0o7-JYkrae5VZuLBQaIVDEq0BSjmFmJCoGTNUxYY3Fi9W6sgMQm3dY3FD1w2zlpIeL9-z2lQziQUV8rvQvAmuGIuPP4La2Cd74s",
+								"data" : {
+									"message" : str(result),
+								},
+							}
+							device = FCMDevice.objects.all().first()
+							device.send_message(title="SalvandoSueños", body="Mensaje de alerta", data=settings)
+							
 							logger.info(result + " ---- polarity: " + str(analized_text.sentiment.polarity))
 					logger.info("--------------------------------------")
 

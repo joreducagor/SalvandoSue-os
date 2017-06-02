@@ -6,7 +6,7 @@ from datetime import datetime
 from textblob import TextBlob
 from fcm_django.models import FCMDevice
 import tweepy
- 
+
 logger = get_task_logger(__name__)
 
 consumer_key = 'oXEsPKoCY80yfEgMqNkgbrWOh'
@@ -18,7 +18,7 @@ auth = tweepy.OAuthHandler(consumer_key, consumer_secret)
 auth.set_access_token(access_token, access_token_secret)
 api = tweepy.API(auth)
 
-@periodic_task(run_every = (crontab(minute = '*/10')), ignore_result = True)
+@periodic_task(run_every = (crontab(minute = '*/2')), ignore_result = True)
 def linked_accounts_analyzer():
 	for linked_account in LinkedAccount.objects.all():
 		users = linked_account.users.all()
@@ -35,24 +35,21 @@ def linked_accounts_analyzer():
 				if results:
 					linked_account.last_tweet = results[0]
 					linked_account.save()
-					logger.info("Text considered dangerous")
+					logger.info("-- Text considered dangerous --")
 					logger.info("--------------------------------------")
 					for result in results:
-						analized_text = TextBlob(str(result)).translate(to = 'en')
+						text_to_analize = TextBlob(str(result))
+						if text_to_analize.detect_language() == 'es':
+							try:
+								analized_text = text_to_analize.translate(to = 'en')
+							except:
+								logger.info("-- No translated --")
 						if analized_text.sentiment.polarity < 0:
-							settings = {
-								"to" : "f-H2Q5CRgus:APA91bFJTCtanP5vFpldNyrY5fXmcjLOuXUhjEGfw0o7-JYkrae5VZuLBQaIVDEq0BSjmFmJCoGTNUxYY3Fi9W6sgMQm3dY3FD1w2zlpIeL9-z2lQziQUV8rvQvAmuGIuPP4La2Cd74s",
-								"data" : {
-									"message" : str(result),
-								},
-							}
-							device = FCMDevice.objects.all().first()
-							device.send_message(title="SalvandoSueños", body="Mensaje de alerta", data=settings)
-							
+							for user in users:
+								device = FCMDevice(registration_id = user.device_set.first().key, type = "android")
+								device.send_message(title="Alerta!", body="Tweet malintencionado detectado.", data={"tweet": str(result)})
 							logger.info(result + " ---- polarity: " + str(analized_text.sentiment.polarity))
 					logger.info("--------------------------------------")
-
 			except tweepy.TweepError as e:
 				logger.info("Internal problems with the linked accounts")
-
 	name = "linked_accounts_analyzer"

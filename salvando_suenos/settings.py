@@ -133,7 +133,7 @@ CELERY_ACCEPT_CONTENT = ["json", "msgpack"]
 CELERYBEAT_SCHEDULER = 'djcelery.schedulers.DatabaseScheduler'
 
 BROKER_TRANSPORT_OPTIONS = {
-    "max_connections": 20,
+    "max_connections": 50,
 }
 
 # Static files (CSS, JavaScript, Images)

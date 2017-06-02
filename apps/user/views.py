@@ -5,6 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from apps.user.serializers import UserSerializer, DetailUserSerializer
 from apps.account.serializers import LinkedAccountSerializer
+from apps.result.serializers import ResultSerializer
 import json
 
 class APIUserList(APIView):
@@ -63,3 +64,16 @@ class APIUserLinkedAccounts(APIView):
 		linked_accounts = user.linkedaccount_set.all()
 		linked_accounts_json = LinkedAccountSerializer(linked_accounts, many = True)
 		return Response({"linked_accounts": linked_accounts_json.data})
+
+class APIUserResults(APIView):
+	def set_object(self, pk):
+		try:
+			return User.objects.get(pk=pk)
+		except User.DoesNotExist:
+			raise Http404
+
+	def get(self, request, pk):
+		user = self.set_object(pk)
+		results = user.result_set.all()
+		results_json = ResultSerializer(results, many = True)
+		return Response({"results": results_json.data})

@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     "fcm_django",
     'apps.user',
     'apps.device',
+    'apps.result',
     'apps.account',
 ]
 

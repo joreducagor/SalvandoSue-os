@@ -48,11 +48,14 @@ def linked_accounts_analyzer():
 							except:
 								logger.info("-- No translated --")
 						if analized_text.sentiment.polarity < 0:
-							for user in users:
-								user_result = Result(tweet = str(result), owner_screen = tw_screen_name, owner_name = tw_name, user = user)
-								user_result.save()
-								device = FCMDevice(registration_id = user.device_set.first().key, type = "android")
-								device.send_message(title="Alerta!", body="Tweet malintencionado detectado.", data={"tweet": str(result)})
+							for u in users:
+								if u.device_set is None
+									logger.info("not device registered for " + u.username)
+								else
+									user_result = Result(tweet = str(result), owner_screen = tw_screen_name, owner_name = tw_name, user = u)
+									user_result.save()
+									device = FCMDevice(registration_id = u.device_set.first().key, type = "android")
+									device.send_message(title="Alerta!", body="Tweet peligroso!", data={"tweet": str(result)})
 							logger.info(result + " ---- polarity: " + str(analized_text.sentiment.polarity))
 					logger.info("--------------------------------------")
 			except tweepy.TweepError as e:

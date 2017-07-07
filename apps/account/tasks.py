@@ -49,7 +49,7 @@ def linked_accounts_analyzer():
 								logger.info("-- No translated --")
 						if analized_text.sentiment.polarity < 0:
 							for u in users:
-								if u.device_set is None
+								if u.device_set is None:
 									logger.info("not device registered for " + u.username)
 								else
 									user_result = Result(tweet = str(result), owner_screen = tw_screen_name, owner_name = tw_name, user = u)

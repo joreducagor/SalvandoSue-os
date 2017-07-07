@@ -51,7 +51,7 @@ def linked_accounts_analyzer():
 							for u in users:
 								if u.device_set is None:
 									logger.info("not device registered for " + u.username)
-								else
+								else:
 									user_result = Result(tweet = str(result), owner_screen = tw_screen_name, owner_name = tw_name, user = u)
 									user_result.save()
 									device = FCMDevice(registration_id = u.device_set.first().key, type = "android")

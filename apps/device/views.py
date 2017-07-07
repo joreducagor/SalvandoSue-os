@@ -27,6 +27,7 @@ class APIDeviceList(APIView):
 				device = None
 			if device is not None:
 				device.key = request.data['device_params']['key']
+				device.user = user
 				device.save()
 				device_json = DeviceSerializer(device)
 				return Response(device_json.data, status = 201)
